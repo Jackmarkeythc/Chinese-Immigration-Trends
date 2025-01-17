@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chinese Immigration Trends and Community Density</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script src="https://d3js.org/d3-sankey.v0.12.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .tooltip {
+      font-family: Arial, sans-serif;
+      font-size: 12px;
+      pointer-events: none;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+    .container {
+      margin: 20px;
+    }
+    .visualization {
+      margin-bottom: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Chinese Immigration Trends and Community Density</h1>
+    <p>This page explores the trends in Chinese immigration and the distribution of Chinese communities around the world through various data visualizations.</p>
+
+    <div class="visualization">
+      <h2>Annual Immigration Trends (2018–2023)</h2>
+      <p>This bar chart shows the annual immigration trends of Chinese immigrants to Canada, the United States, and Australia from 2018 to 2023.</p>
+      <canvas id="barChart"></canvas>
+    </div>
+
+    <div class="visualization">
+      <h2>Flow of Immigrants</h2>
+      <p>This pie chart visualizes the flow of Chinese immigrants to different countries.</p>
+      <canvas id="pieChart"></canvas>
+    </div>
+
+    <div class="visualization">
+      <h2>Chinese Community Density</h2>
+      <p>This heatmap shows the density of Chinese communities in various cities around the world.</p>
+      <div id="map" style="width: 100%; height: 500px;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Bar Chart
+    const ctx = document.getElementById('barChart').getContext('2d');
+    const barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['2018', '2019', '2020', '2021', '2022'],
+        datasets: [
+          {
+            label: 'Canada',
+            data: [50000, 52000, 48000, 55000, 60000],
+            backgroundColor: 'rgba(75, 192, 192, 0.5)',
+          },
+          {
+            label: 'United States',
+            data: [60000, 58000, 54000, 56000, 59000],
+            backgroundColor: 'rgba(192, 75, 192, 0.5)',
+          },
+          {
+            label: 'Australia',
+            data: [40000, 42000, 38000, 45000, 47000],
+            backgroundColor: 'rgba(192, 192, 75, 0.5)',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Number of Immigrants' },
+          },
+          x: {
+            title: { display: true, text: 'Years' },
+          },
+        },
+      },
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const pieChart = new Chart(pieCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Canada', 'United States', 'Australia'],
+        datasets: [{
+          data: [50000, 60000, 40000],
+          backgroundColor: [
+            'rgba(75, 192, 192, 0.5)',
+            'rgba(192, 75, 192, 0.5)',
+            'rgba(192, 192, 75, 0.5)',
+          ],
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+        },
+      },
+    });
+
+    // Heatmap
+    const map = L.map('map').setView([30, 110], 4); // Centered near China
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    const locations = [
+      [43.65107, -79.347015], // Toronto
+      [37.77493, -122.41942], // San Francisco
+      [-33.86882, 151.20929], // Sydney
+      [3.139, 101.6869], // Kuala Lumpur
+      [35.6895, 139.6917], // Tokyo
+    ];
+
+    locations.forEach(location => {
+      L.circle(location, { radius: 50000, color: 'red' }).addTo(map);
+    });
+  </script>
+  <script src="js/sankey.js" defer></script>
+</body>
+</html>

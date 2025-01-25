@@ -8,8 +8,8 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://d3js.org/d3.v6.min.js"></script>
-  <script src="https://d3js.org/d3-sankey.v0.12.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
   <style>
     .tooltip {
       font-family: Arial, sans-serif;
@@ -21,36 +21,83 @@
       height: 100%;
     }
     .container {
-      margin: 20px;
+      margin: 20px auto;
+      max-width: 1200px;
+      text-align: center;
     }
     .visualization {
       margin-bottom: 40px;
     }
+    .chart-container {
+      position: relative;
+      width: 80%;
+      height: 400px;
+      margin: 0 auto;
+    }
+    #map {
+      width: 80%;
+      height: 600px;
+      margin: 0 auto;
+    }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      line-height: 1.6;
+    }
+    .header {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 0;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="header">
     <h1>Chinese Immigration Trends and Community Density</h1>
-    <p>This page explores the trends in Chinese immigration and the distribution of Chinese communities around the world through various data visualizations.</p>
+  </div>
+  <div class="content">
+    <div class="container">
+      <p>Haiming Wang</p>
+      <p>This page explores the trends in Chinese immigration and the distribution of Chinese communities around the world through various data visualizations.</p>
 
-    <div class="visualization">
-      <h2>Annual Immigration Trends (2018–2023)</h2>
-      <p>This bar chart shows the annual immigration trends of Chinese immigrants to Canada, the United States, and Australia from 2018 to 2023.</p>
-      <canvas id="barChart"></canvas>
-    </div>
+      <div class="visualization">
+        <h2>Annual Immigration Trends (2018–2023)</h2>
+        <p>This bar chart shows the annual immigration trends of Chinese immigrants to Canada, the United States, and Australia from 2018 to 2023.</p>
+        <div class="chart-container">
+          <canvas id="barChart"></canvas>
+        </div>
+        <p>The bar chart above illustrates the number of Chinese immigrants to Canada, the United States, and Australia over a five-year period. It highlights the fluctuations and trends in immigration numbers, providing insights into the migration patterns of Chinese nationals.Immigration decreased in 2020–2021 due to the COVID-19 pandemic, which caused travel restrictions, visa processing delays, economic uncertainty, and health concerns, making migration difficult and less appealing during this period.</p>
+      </div>
 
-    <div class="visualization">
-      <h2>Flow of Immigrants</h2>
-      <p>This pie chart visualizes the flow of Chinese immigrants to different countries.</p>
-      <canvas id="pieChart"></canvas>
-    </div>
+      <div class="visualization">
+        <h2>Flow of Immigrants</h2>
+        <p>This pie chart visualizes the flow of Chinese immigrants to different countries.</p>
+        <div class="chart-container">
+          <canvas id="pieChart"></canvas>
+        </div>
+        <p>From 2018 to 2023, Chinese immigration to Canada, the U.S., and Australia increased due to economic opportunities, high-quality education, and immigration-friendly policies. These countries offer stable economies, skilled worker programs, and top universities, attracting Chinese professionals and students. Push factors like China’s political and environmental concerns, combined with the pull of established Chinese communities and better quality of life abroad, made these nations desirable destinations.</p>
+      </div>
 
-    <div class="visualization">
-      <h2>Chinese Community Density</h2>
-      <p>This heatmap shows the density of Chinese communities in various cities around the world.</p>
-      <div id="map" style="width: 100%; height: 500px;"></div>
+      <div class="visualization">
+        <h2>Chinese Community Density</h2>
+        <p>This heatmap shows the density of Chinese communities in various cities around the world.</p>
+        <div id="map"></div>
+        <p>The heatmap above displays the density of Chinese communities in major cities around the world. The red circles indicate areas with significant Chinese populations, offering a visual understanding of where Chinese communities are most concentrated globally.</p>
+      </div>
     </div>
   </div>
+
 
   <script>
     // Bar Chart
@@ -118,13 +165,23 @@
     });
 
     // Heatmap
-    const map = L.map('map').setView([30, 110], 4); // Centered near China
+    const map = L.map('map').setView([20, 0], 2); // Centered to show more locations globally
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
     }).addTo(map);
 
-    const locations = [
+    const heatLocations = [
+      [43.65107, -79.347015, 1], // Toronto
+      [37.77493, -122.41942, 1], // San Francisco
+      [-33.86882, 151.20929, 1], // Sydney
+      [3.139, 101.6869, 1], // Kuala Lumpur
+      [35.6895, 139.6917, 1], // Tokyo
+    ];
+
+    L.heatLayer(heatLocations, { radius: 25, blur: 15, maxZoom: 17 }).addTo(map);
+
+    const markerLocations = [
       [43.65107, -79.347015], // Toronto
       [37.77493, -122.41942], // San Francisco
       [-33.86882, 151.20929], // Sydney
@@ -132,10 +189,9 @@
       [35.6895, 139.6917], // Tokyo
     ];
 
-    locations.forEach(location => {
-      L.circle(location, { radius: 50000, color: 'red' }).addTo(map);
+    markerLocations.forEach(location => {
+      L.marker(location, { icon: L.icon({ iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] }) }).addTo(map);
     });
   </script>
-  <script src="js/sankey.js" defer></script>
 </body>
 </html>
